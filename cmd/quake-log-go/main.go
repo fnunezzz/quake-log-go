@@ -62,6 +62,7 @@ func gameDataReport(file *os.File) {
 			killedBy := lineContent[5]
 			playerKilled := lineContent[7]
 			gameData.CalculateKillPoints(killedBy, playerKilled)
+			continue
 		case strings.Contains(action, "shutdowngame"):
 			jsonData, err := helpers.ToJson(gameData)
 			if err != nil {
@@ -71,6 +72,7 @@ func gameDataReport(file *os.File) {
 	
 			message := fmt.Sprintf("Game_%d: %s", gameNumber, string(jsonData))
 			fmt.Println(message)
+			continue
 		default:
 			continue
 		}

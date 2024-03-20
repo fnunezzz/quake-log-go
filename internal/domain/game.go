@@ -1,9 +1,5 @@
 package domain
 
-import "strings"
-
-
-
 type GameData struct {
 	TotalKills int            `json:"total_kills"`
 	Players    []string       `json:"players"`
@@ -19,7 +15,8 @@ func CreateGame() *GameData {
 }
 
 func (g *GameData) NewPlayer(player string) {
-	if strings.Contains(player, "world") {
+	// <world> is a reserverd word for the game. Any other combination is accepted
+	if player == "<world>" {
 		return
 	}
 	g.addPlayer(player)
