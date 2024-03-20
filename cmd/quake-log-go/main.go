@@ -8,7 +8,7 @@ import (
 	"strings"
 
 	"github.com/fnunezzz/quake-log-go/internal/domain"
-	helpers "github.com/fnunezzz/quake-log-go/internal/helpers"
+	"github.com/fnunezzz/quake-log-go/internal/helpers"
 	"github.com/joho/godotenv"
 )
 
@@ -22,17 +22,21 @@ func main() {
 
 	defer file.Close()
 
-    processGameData(file)
+    gameDataReport(file)
 
 }
 
-func processGameData(file *os.File) {
+
+
+func gameDataReport(file *os.File) {
 	reader := bufio.NewReader(file)
 
-	gameData := domain.CreateGame()
+	var gameData *domain.GameData
+
     
 	// Infinite loop
 	// keeps iterating until an error occurs (end of file)
+	gameNumber := 0
     for {
         line, err := reader.ReadString('\n')
         if err != nil {
@@ -46,28 +50,34 @@ func processGameData(file *os.File) {
 		
 		switch {
 		case strings.Contains(action, "initgame"):
+			gameData = domain.CreateGame()
+			gameNumber++
+			continue
+		case strings.Contains(action, "clientuserinfochanged"):
+			// not every player will have a kill. Some can just join the game and be AFK
+			player := strings.Split(lineContent[3], "\\")[1]
+			gameData.NewPlayer(player)
 			continue
 		case strings.Contains(action, "kill"):
 			killedBy := lineContent[5]
-			playerKilled := lineContent[5]
+			playerKilled := lineContent[7]
 			gameData.CalculateKillPoints(killedBy, playerKilled)
-			
-		case strings.Contains(action, "clientconnect"):
-			continue
 		case strings.Contains(action, "shutdowngame"):
-			gameData = domain.CreateGame()
+			jsonData, err := helpers.ToJson(gameData)
+			if err != nil {
+				fmt.Println("Error:", err)
+				return
+			}
+	
+			message := fmt.Sprintf("Game_%d: %s", gameNumber, string(jsonData))
+			fmt.Println(message)
+		default:
+			continue
 		}
+		
 
-		// Convert the struct to JSON
-		jsonData, err := helpers.ToJson(gameData)
-		if err != nil {
-			fmt.Println("Error:", err)
-			return
-		}
 
-		// Print the JSON data
-		fmt.Println(string(jsonData))
-
+		
     }
 }
 

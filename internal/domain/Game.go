@@ -1,5 +1,9 @@
 package domain
 
+import "strings"
+
+
+
 type GameData struct {
 	TotalKills int            `json:"total_kills"`
 	Players    []string       `json:"players"`
@@ -14,10 +18,14 @@ func CreateGame() *GameData {
 	}
 }
 
-func (g *GameData) addPlayer(killedBy string, player string) {
-	if killedBy == "<world>" {
+func (g *GameData) NewPlayer(player string) {
+	if strings.Contains(player, "world") {
 		return
 	}
+	g.addPlayer(player)
+}
+
+func (g *GameData) addPlayer(player string) {
 	for _, p := range g.Players {
 		if p == player {
 			return
@@ -26,19 +34,8 @@ func (g *GameData) addPlayer(killedBy string, player string) {
 	g.Players = append(g.Players, player)
 }
 
-func (g *GameData) removePlayer(player string) {
-	for i, p := range g.Players {
-		if p == player {
-			g.Players = append(g.Players[:i], g.Players[i+1:]...)
-		}
-	}
-}
-
-func (g *GameData) addKill(killedBy string, player string) {
-	if killedBy == "<world>" {
-		g.removeKill(player)
-	}
-	g.Kills[killedBy] = g.Kills[killedBy] + 1
+func (g *GameData) addKill(player string) {
+	g.Kills[player] = g.Kills[player] + 1
 }
 
 func (g *GameData) removeKill(player string) {
@@ -55,8 +52,12 @@ func (g *GameData) addTotalKills() {
 
 func (g *GameData) CalculateKillPoints(killedBy string, playerKilled string) {
 	g.addTotalKills()
-	g.addPlayer(killedBy, playerKilled)
-	g.addKill(killedBy, playerKilled)
+	if killedBy != "<world>" {
+		g.addPlayer(killedBy)
+		g.addKill(killedBy)
+	} else {
+		g.removeKill(playerKilled)
+	}
 }
 
 func (g *GameData) ResetGame() {
