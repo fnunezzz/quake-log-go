@@ -37,10 +37,6 @@ func (g *GameData) addKill(player string) {
 
 func (g *GameData) removeKill(player string) {
 	g.Kills[player] = g.Kills[player] - 1
-	if g.Kills[player] < 0 {
-		g.Kills[player] = 0
-
-	}
 }
 
 func (g *GameData) addTotalKills() {

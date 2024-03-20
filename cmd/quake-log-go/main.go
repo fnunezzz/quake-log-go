@@ -47,7 +47,6 @@ func gameDataReport(file *os.File) {
         
 		lineContent := strings.Split(lineNormalized, " ")
 		action := strings.ToLower(lineContent[1])
-		
 		switch {
 		case strings.Contains(action, "initgame"):
 			gameData = domain.CreateGame()
