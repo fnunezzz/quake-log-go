@@ -4,6 +4,18 @@
 
 This a log parser for a Quake log file. It generates two reports: player ranking and death causes.
 
+This project was built using Go version 1.22.1
+
+## Installation
+
+To install this project dependencies use the following command:
+
+```shell
+# Install
+$ go mod tidy
+
+```
+
 ## Tests
 
 To run the tests use the following command:
@@ -27,6 +39,7 @@ $ go run .\cmd\player-report\player-report.go -filepath C:\Path\To\File\file.ext
 
 # Linux
 $ go run ./cmd/player-report/player-report.go -filepath ~/path/to/file/file.extension
+
 ```
 
 ## Death Cause Report (Item 3.3)
@@ -39,4 +52,5 @@ $ go run .\cmd\weapon-report\weapon-report.go -filepath C:\Path\To\File\file.ext
 
 # Linux
 $ go run ./cmd/weapon-report/weapon-report.go -filepath ~/path/to/file/file.extension
+
 ```
