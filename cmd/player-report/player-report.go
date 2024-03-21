@@ -2,6 +2,7 @@ package main
 
 import (
 	"bufio"
+	"flag"
 	"fmt"
 	"log"
 	"os"
@@ -9,13 +10,20 @@ import (
 
 	"github.com/fnunezzz/quake-log-go/internal/domain"
 	"github.com/fnunezzz/quake-log-go/internal/helpers"
-	"github.com/joho/godotenv"
 )
 
 func main() {
-	godotenv.Load()
 	
-	file, err := os.Open(os.Getenv("FILE_PATH"))
+	var filePath string
+
+	flag.StringVar(&filePath, "filepath", "", "Absolute path to the game log including the file name and extension")
+	flag.Parse()
+
+	if (filePath == "") {
+		log.Fatalf("filePath is required and cannot be empty")
+	}
+	
+	file, err := os.Open(filePath)
 	if err != nil {
 		log.Fatalf("unable to read file: %v", err)
 	}
