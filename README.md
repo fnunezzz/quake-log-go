@@ -29,7 +29,7 @@ $ go run .\cmd\player-report\player-report.go -filepath C:\Path\To\File\file.ext
 $ go run ./cmd/player-report/player-report.go -filepath ~/path/to/file/file.extension
 ```
 
-## Death Cause Report (3.3)
+## Death Cause Report (Item 3.3)
 
 To execute the death cause report use the following command:
 
