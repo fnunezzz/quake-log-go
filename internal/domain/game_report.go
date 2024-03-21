@@ -1,20 +1,20 @@
 package domain
 
-type GameData struct {
+type GameReportData struct {
 	TotalKills int            `json:"total_kills"`
 	Players    []string       `json:"players"`
 	Kills      map[string]int `json:"kills"`
 }
 
-func CreateGame() *GameData {
-	return &GameData{
+func CreateGameReport() *GameReportData {
+	return &GameReportData{
 		TotalKills: 0,
 		Kills:      make(map[string]int),
 		Players:    []string{},
 	}
 }
 
-func (g *GameData) NewPlayer(player string) {
+func (g *GameReportData) NewPlayer(player string) {
 	// <world> is a reserverd word for the game. Any other combination is accepted
 	if player == "<world>" {
 		return
@@ -22,7 +22,7 @@ func (g *GameData) NewPlayer(player string) {
 	g.addPlayer(player)
 }
 
-func (g *GameData) addPlayer(player string) {
+func (g *GameReportData) addPlayer(player string) {
 	for _, p := range g.Players {
 		if p == player {
 			return
@@ -31,19 +31,19 @@ func (g *GameData) addPlayer(player string) {
 	g.Players = append(g.Players, player)
 }
 
-func (g *GameData) addKill(player string) {
+func (g *GameReportData) addKill(player string) {
 	g.Kills[player] = g.Kills[player] + 1
 }
 
-func (g *GameData) removeKill(player string) {
+func (g *GameReportData) removeKill(player string) {
 	g.Kills[player] = g.Kills[player] - 1
 }
 
-func (g *GameData) addTotalKills() {
+func (g *GameReportData) addTotalKills() {
 	g.TotalKills++
 }
 
-func (g *GameData) CalculateKillPoints(killedBy string, playerKilled string) {
+func (g *GameReportData) CalculateKillPoints(killedBy string, playerKilled string) {
 	g.addTotalKills()
 	if killedBy != "<world>" {
 		g.addPlayer(killedBy)
@@ -53,7 +53,7 @@ func (g *GameData) CalculateKillPoints(killedBy string, playerKilled string) {
 	}
 }
 
-func (g *GameData) ResetGame() {
+func (g *GameReportData) ResetGame() {
 	g.TotalKills = 0
 	g.Players = []string{}
 	g.Kills = make(map[string]int)

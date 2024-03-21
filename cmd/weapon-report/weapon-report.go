@@ -22,16 +22,9 @@ func main() {
 
 	defer file.Close()
 
-    gameDataReport(file)
-
-}
-
-
-
-func gameDataReport(file *os.File) {
 	reader := bufio.NewReader(file)
 
-	var gameData *domain.GameData
+	var weaponScore *domain.WeaponScoreReport
 
     
 	// Infinite loop
@@ -43,27 +36,21 @@ func gameDataReport(file *os.File) {
             break
         }
 
-		lineNormalized := removeTrailingSpaces(line)
+		lineNormalized := helpers.RemoveTrailingSpaces(line)
         
 		lineContent := strings.Split(lineNormalized, " ")
 		action := strings.ToLower(lineContent[1])
 		switch {
 		case strings.Contains(action, "initgame"):
-			gameData = domain.CreateGame()
+			weaponScore = domain.CreateWeponReport()
 			gameNumber++
 			continue
-		case strings.Contains(action, "clientuserinfochanged"):
-			// not every player will have a kill. Some can just join the game and be AFK
-			player := strings.Split(lineContent[3], "\\")[1]
-			gameData.NewPlayer(player)
-			continue
 		case strings.Contains(action, "kill"):
-			killedBy := lineContent[5]
-			playerKilled := lineContent[7]
-			gameData.CalculateKillPoints(killedBy, playerKilled)
+			weapon := lineContent[len(lineContent)-1]
+			weaponScore.AddKill(weapon)
 			continue
 		case strings.Contains(action, "shutdowngame"):
-			jsonData, err := helpers.ToJson(gameData)
+			jsonData, err := helpers.ToJson(weaponScore)
 			if err != nil {
 				fmt.Println("Error:", err)
 				return
@@ -75,20 +62,8 @@ func gameDataReport(file *os.File) {
 		default:
 			continue
 		}
-		
-
-
-		
-    }
+	}
 }
 
 
 
-
-
-
-// Remove leading and trailing spaces from a string
-func removeTrailingSpaces(text string) string {
-	return strings.TrimSpace(text)
-
-}
